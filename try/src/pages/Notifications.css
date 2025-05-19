@@ -1,0 +1,41 @@
+/* style.css */
+
+.Notifications-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .notification {
+    background-color: #fff;
+    border-left: 5px solid #4a90e2;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .notification:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .notification h4 {
+    margin: 0 0 8px;
+    color: #333;
+    font-size: 18px;
+  }
+  
+  .notification p {
+    margin: 0;
+    color: #555;
+    font-size: 15px;
+  }
+  
+  .notification.unread {
+    background-color: #ececec; /* Slightly darker than #fff */
+    border-left-color: #d9534f; /* Different color to highlight unread */
+  }
+  
