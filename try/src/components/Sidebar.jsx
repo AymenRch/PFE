@@ -7,7 +7,8 @@ import {
   MessageSquareMore,
   Moon,
   Sun,
-  LogOut
+  LogOut,
+  Contrast
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import './Sidebar.css';
@@ -52,6 +53,15 @@ const Sidebar = () => {
         <NavLink to="/requests" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
           <MessageSquareMore size={20} />
           <span>Requests</span>
+        </NavLink>
+
+        <NavLink to="/contracts" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+          <Contrast size={20} />
+        <span>Contracts</span>
+        </NavLink>
+        <NavLink to="/payment" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
+          <Contrast size={20} />
+        <span>Payment</span>
         </NavLink>
       </nav>
 

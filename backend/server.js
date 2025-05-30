@@ -20,7 +20,8 @@ app.use('/proj',ProjectRoute);
 import requestRoute from './routes/requestRoute.js';
 app.use('/request',requestRoute);
 
+const port = 9000;
 // Ensure the correct port number
-app.listen(9000, () => {
-  console.log('Server is running on port 9000');
+app.listen({port}, () => {
+  console.log(`Server is running on port ${port}`);
 });

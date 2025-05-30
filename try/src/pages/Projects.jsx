@@ -42,15 +42,18 @@ const Projects = () => {
   const [error, setError] = useState(null);
 
   const handleCreateProject = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/auth');
+      return;
+    }
     navigate('/create-project');
   };
 
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
+      
 
       const response = await axios.get('http://localhost:9000/proj/all', {
         headers: {

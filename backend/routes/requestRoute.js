@@ -2,13 +2,15 @@ import express from 'express'
 import db from '../config/db.js'
 import transporter from '../middleWares/email.js'
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const router = express.Router()
 
 
 router.get('/mine/:token',(req,res)=>{
     const {token} = req.params
-    const decoded =  jwt.verify(token, '1766736');
+    const decoded =  jwt.verify(token, process.env.JWT_SECRET);
     const id = decoded.id;
     const query = `
         SELECT investmentdeal.*, projects.title AS projectTitle
@@ -53,6 +55,8 @@ router.post('/make/:id', async (req, res) => {
 
         const project = projectData[0];
         const entrepreneurId = project.userId;
+
+        if(entrepreneurId === investorId) return res.status(201).json({message:'You Can Not Invest In Your Own Project '})
 
         const insertDealQuery = `
           INSERT INTO investmentDeal 
@@ -314,6 +318,141 @@ router.get('/contracts/:token', (req, res) => {
     return res.status(401).json({ error: "Invalid token" });
   }
 });
+
+router.get('/contract/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT contract.*, projects.title AS projectTitle 
+    FROM contract
+    JOIN projects ON contract.projectId = projects.id
+    WHERE contract.id = ?
+  `;
+
+  db.query(query, [id], (err, contractData) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (contractData.length === 0) return res.status(404).json({ error: 'Contract not found' });
+
+    const contract = contractData[0];
+    const investorId = contract.investorId;
+    const entrepreneurId = contract.entrepreneurId;
+
+    const query2 = `
+      SELECT * FROM users 
+      WHERE id IN (?, ?)
+    `;
+
+    db.query(query2, [investorId, entrepreneurId], (err2, userData) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      if (userData.length < 2) return res.status(404).json({ error: 'One or both users not found' });
+
+      // Trouver les bons utilisateurs par ID
+      const investorData = userData.find(user => user.id === investorId);
+      const entrepreneurData = userData.find(user => user.id === entrepreneurId);
+
+      return res.status(200).json({
+        contract,
+        investorData,
+        entrepreneurData
+      });
+    });
+  });
+});
+
+
+router.post('/counter/:id',(req,res)=>{
+  const authHead = req.headers.authorization;
+  if (!authHead) return res.status(401).json({ error: "Token is required" });
+  const token = authHead.split(" ")[1];
+  const decoded = jwt.verify(token, '1766736');
+  const investorId = decoded.id;
+  const { amount, model, equity, revenue, duration } = req.body;
+  const projectId = req.params.id;       
+  const query = "SELECT * FROM projects WHERE id = ?";
+
+  db.query(query, [projectId], (err, projectData) => {
+    if( err) return res.status(500).json({ error: err.message });
+    if (projectData.length === 0) return res.status(404).json({ error: 'Project not found' });
+    const project = projectData[0];
+    const entrepreneurId = project.userId;
+    if (entrepreneurId === investorId) return res.status(403).json({ message: 'You cannot counter your own project' });
+    const insertQuery = 'INSERT INTO investmentdeal (projectId, investorId, entrepreneurId, investmentAmount, investmentModel, equityPercentage, revenueSharePercentage, duration, dealStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [
+      projectId,
+      investorId,
+      entrepreneurId,
+      amount ,
+      model ,
+      equity ,
+      revenue ,
+      duration,
+      'pending'
+    ];
+    console.log(values);
+    db.query(insertQuery, values, async (err) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      return res.status(201).json({ message: 'Counter offer sent successfully' });
+    })
+
+  })
+})
+
+
+router.put('/contract/accept/:id', (req, res) => {
+  const id = req.params.id;
+const authHead = req.headers.authorization;
+
+  if (!authHead) return res.status(401).json({ error: "Token is required" });
+
+  try {
+    const token = authHead.split(" ")[1];
+    const decoded = jwt.verify(token, '1766736');
+    const userId = decoded.id;
+
+    const query = "SELECT entrepreneurId, projectId FROM contract WHERE id = ?";
+    db.query(query, [id], (err, data) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (data.length === 0) return res.status(404).json({ message: 'Contract not found or declined' });
+
+      if (userId != data[0].entrepreneurId)
+        return res.status(403).json({ message: 'Only the entrepreneur can sign the contract' });
+
+      const projectId = data[0].projectId;
+      const checkQuery = "SELECT * FROM contract WHERE projectId = ? AND signed = ?";
+      db.query(checkQuery, [projectId, 'signed'], (err2, data2) => {
+        if (err2) return res.status(500).json({ error: err2.message });
+        if (data2.length > 0)
+          return res.status(409).json({ message: 'Only one contract can be signed per project' });
+
+        const signQuery = "UPDATE contract SET signed = ? WHERE id = ?";
+        db.query(signQuery, ['signed', id], (err3) => {
+          if (err3) return res.status(500).json({ error: err3.message });
+          return res.status(200).json({ message: 'Contract signed successfully' });
+        });
+      });
+    });
+
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+router.delete('/contract/decline/:id',(req,res)=>{
+  const id = req.params.id
+ 
+  try {
+    const query = "DELETE FROM contract WHERE id = ?"
+    db.query(query,[id],(err)=>{
+      if(err) return res.status(500).json({error:err.message})
+      return res.status(200).json({message:'Contract Declined Successfully'})
+    })
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+})
 
 
 export default router;

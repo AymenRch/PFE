@@ -142,7 +142,7 @@ const Requests = () => {
       </div>
 
       <div className="requests-grid">
-        {filteredRequests.map(request => (
+        {filteredRequests.slice().reverse().map(request => (
           <div key={request.id} className="request-card">
             <div className="request-header">
               <div className="request-title-section">

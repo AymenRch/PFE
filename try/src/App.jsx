@@ -16,10 +16,22 @@ import Notifications from './pages/Notifications';
 import Contracts from './pages/Contracts';
 import Payment from './pages/Payment';
 import Conter from './pages/Conter';
+import Contract from './pages/contract'
+import LandingPage from './pages/LandingPage';
+import LandingHome from './components/LandingHome';
+import About from './components/About';
+import Features from './components/Features';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage/>} >
+        <Route index element={<LandingHome />} />
+        <Route path="features" element={<Features />} />
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Footer />} />
+      </Route>
       <Route path="/auth" element={<Auth />} />
       <Route path="/auth2/:token" element={<Auth2 />} />
 
@@ -37,6 +49,12 @@ function App() {
           <Layout>
             <Projects />
           </Layout>
+        }
+      />
+      <Route
+        path="/AllProjects"
+        element={
+            <Projects />
         }
       />
       <Route
@@ -79,6 +97,12 @@ function App() {
           </Layout>
         }
       />
+       <Route
+        path="/AllProjects/:id"
+        element={
+            <ProjectDetails />
+        }
+      />
 
       <Route
         path="/notification"
@@ -108,6 +132,14 @@ function App() {
         element={
         <Layout>
         <Conter/>
+        </Layout>
+      }
+     />
+     <Route
+        path="/contract/:id"
+        element={
+        <Layout>
+        <Contract/>
         </Layout>
       }
      />

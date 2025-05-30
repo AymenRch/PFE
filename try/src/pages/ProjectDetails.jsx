@@ -82,9 +82,9 @@ const handleMakeOffer = async () => {
     );
 
     if (offerRes.status === 201) {
-      alert('Offer made successfully');
+      alert(offerRes);
       navigate('/dashboard');
-    } else {
+    }else {
       alert('Failed to make offer');
     }
 

@@ -421,7 +421,19 @@ router.put('/notifications/:id',(req,res)=>{
   }
 }
 
-)
+);
+
+router.get('/identity/:token',(req,res)=>{
+  const token = req.params.token;
+  const decoded = jwt.verify(token, '1766736');
+  const id = decoded.id
+  const query = "SELECT faceDescriptor FROM users WHERE id = ?"
+
+  db.query(query,[id],(err,data)=>{
+    if(err) return res.status(404).json({message: err})
+      return res.status(200).json(data)
+  })
+})
 
 
 export default router;
