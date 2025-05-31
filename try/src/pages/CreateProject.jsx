@@ -11,6 +11,7 @@ const CreateProject = () => {
     description: '',
     projectStatus: 'In Progress',
     budget: '',
+    model:'',
     equetyPercentage: '',
     revenueSharePercentage: '',
     deadline: '',
@@ -25,13 +26,18 @@ const CreateProject = () => {
   const [dragActive, setDragActive] = useState(false);
 
   const categories = [
-    'Web Development',
-    'Mobile App',
-    'UI/UX Design',
-    'Cloud Infrastructure',
-    'DevOps',
+    'IT',
+    'Commerce',
+    'Restoration',
+    'Adds',
+    'construction',
     'Other'
   ];
+
+  const models =[
+    'partnership',
+    'revenue share'
+  ]
 
   const wilayas = [
     "Adrar", "Chlef", "Laghouat", "Oum El Bouaghi", "Batna", "Béjaïa", "Biskra", "Béchar", "Blida", "Bouira",
@@ -44,15 +50,6 @@ const CreateProject = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.budget) newErrors.budget = 'Budget is required';
-    if (!formData.equetyPercentage) newErrors.equetyPercentage = 'Equity percentage is required';
-    if (!formData.revenueSharePercentage) newErrors.revenueSharePercentage = 'Revenue share percentage is required';
-    if (!formData.deadline) newErrors.deadline = 'Deadline is required';
-    if (!formData.location) newErrors.location = 'Location is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -118,6 +115,7 @@ const CreateProject = () => {
       data.append('description', formData.description);
       data.append('projectStatus', formData.projectStatus);
       data.append('budget', formData.budget);
+      data.append('model', formData.model);
       data.append('equetyPercentage', formData.equetyPercentage);
       data.append('revenueSharePercentage', formData.revenueSharePercentage);
       data.append('deadline', formData.deadline);
@@ -213,6 +211,23 @@ const CreateProject = () => {
             </div>
 
             <div className="form-group">
+              <label htmlFor="category">Businnes Model <span className="required">*</span></label>
+              <select
+                id="model"
+                name="model"
+                value={formData.model}
+                onChange={handleChange}
+                className={errors.model ? 'error' : ''}
+              >
+                <option value="">Select business model</option>
+                {models.map(model => (
+                  <option key={model} value={model}>{model}</option>
+                ))}
+              </select>
+              {errors.model && <div className="error-message">{errors.model}</div>}
+            </div>
+
+            {formData.model === 'partnership' && (<div className="form-group">
               <label htmlFor="equetyPercentage">Equity Percentage <span className="required">*</span></label>
               <input
                 type="number"
@@ -224,9 +239,9 @@ const CreateProject = () => {
                 className={errors.equetyPercentage ? 'error' : ''}
               />
               {errors.equetyPercentage && <div className="error-message">{errors.equetyPercentage}</div>}
-            </div>
+            </div>)}
 
-            <div className="form-group">
+            {formData.model === 'revenue share' && (<div className="form-group">
               <label htmlFor="revenueSharePercentage">Revenue Share Percentage <span className="required">*</span></label>
               <input
                 type="number"
@@ -238,7 +253,7 @@ const CreateProject = () => {
                 className={errors.revenueSharePercentage ? 'error' : ''}
               />
               {errors.revenueSharePercentage && <div className="error-message">{errors.revenueSharePercentage}</div>}
-            </div>
+            </div>)}
 
             <div className="form-group">
               <label htmlFor="deadline">Deadline <span className="required">*</span></label>

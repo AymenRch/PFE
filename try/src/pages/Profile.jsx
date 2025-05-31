@@ -61,7 +61,7 @@ const Profile = () => {
               <i className="fas fa-map-marker-alt" />Location: {user.adress || 'Unknown Location'}
             </span>
             <span className="profile-detail">
-              <i className="fas fa-briefcase" />joined: {joinDate || 'Software Engineer'}
+              <i className="fas fa-briefcase" />joined: {joinDate || 'Today'}
             </span>
             <span className="profile-detail">
               <i className="fas fa-briefcase" />Phone: {user.phone ? `(+213) ${user.phone}` : 'Phone Not Provided'}
@@ -115,7 +115,7 @@ const Profile = () => {
       <div className="profile-projects-section">
         <h2 className="profile-projects-title">Projects</h2>
         {projects.map(project => (
-          <OwnerCard
+          <OwnerCard 
             key={project.id}
             title={project.title}
             description={project.description}

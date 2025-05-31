@@ -21,7 +21,8 @@ import requestRoute from './routes/requestRoute.js';
 app.use('/request',requestRoute);
 
 const port = 9000;
-// Ensure the correct port number
+
+
 app.listen({port}, () => {
   console.log(`Server is running on port ${port}`);
 });

@@ -107,12 +107,13 @@ router.post('/create/:token', upload.single('picture'), async (req, res) => {
             title,
             description,
             budget,
+            model,
             projectStatus,
             equetyPercentage,
             revenueSharePercentage,
             deadline,
             location,
-            category
+            category,
         } = req.body;
 
         const picture = req.file ? `/uploads/${req.file.filename}` : null;
@@ -123,8 +124,8 @@ router.post('/create/:token', upload.single('picture'), async (req, res) => {
 
         const insertQuery = `
             INSERT INTO projects 
-            (userId, title, description, fundingGoal, projectStatus, equetyPercentage, revenueSharePercentage, duration, location, picture, type) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (userId, title, description, fundingGoal, projectStatus, equetyPercentage, revenueSharePercentage, duration, location, picture, type, model) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
         `;
 
         db.query(insertQuery, [
@@ -138,7 +139,8 @@ router.post('/create/:token', upload.single('picture'), async (req, res) => {
             deadline,
             location,
             picture,
-            category
+            category,
+            model
         ], (err, result) => {
             if (err) {
                 console.error('Database error:', err);

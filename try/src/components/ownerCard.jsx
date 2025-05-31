@@ -12,7 +12,7 @@ const OwnerCard = ({
   onClick2
 }) => {
   return (
-    <div className="project-card" style={{cursor:"pointer"}} onClick={onClick}>
+    <div className="project-card" style={{cursor:"pointer",margin:"20px"}} onClick={onClick}>
       <div className="project-card-image">
         <img src={image} alt={title} />
       </div>

@@ -10,19 +10,14 @@ const ProjectDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const token = localStorage.getItem('token');
+
 
   const fetchProject = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
+     
 
-      const response = await axios.get(`http://localhost:9000/proj/one/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(`http://localhost:9000/proj/one/${id}`);
 
       console.log('Project response:', response.data); // Debug log
 
@@ -141,7 +136,7 @@ const handleMakeOffer = async () => {
       </div>
       <div className="project-details-info-col">
         {user && (
-          <Link to={`/user/${user.id}`} className="project-details-user-profile">
+          <Link to={token ? `/user/${user.id}` : `/owner/${user.id}`} className="project-details-user-profile">
             <img 
               src={user.ProfilePicture ? `http://localhost:9000/${user.ProfilePicture}` : 'https://via.placeholder.com/50x50'} 
               alt={user.name} 
@@ -168,13 +163,17 @@ const handleMakeOffer = async () => {
         <div className="project-details-extra">
           <span><strong>Type:</strong> {project.type}</span>
           <span><strong>Status:</strong> {project.projectStatus}</span>
-          <span><strong>Duration:</strong> {project.duration} days</span>
+          <span>
+           <strong>Duration:</strong>{' '}
+           to {project.duration ? new Date(project.duration).toLocaleDateString() : ''} 
+          </span>
           <span><strong>Revenue Share:</strong> {project.revenueSharePercentage}%</span>
         </div>
         <button className="make-offer-btn" onClick={handleMakeOffer}>Accept The Terms</button>
         <Link className='counter' to={`/conter/${id}`}>Make a Counter Offer</Link>
       </div>
     </div>
+
   );
 };
 

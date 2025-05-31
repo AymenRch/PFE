@@ -16,19 +16,17 @@ const algerianWilayas = [
 
 const priceRanges = [
   "All Prices",
-  "Under $10,000",
-  "$10,000 - $25,000",
-  "$25,000 - $50,000",
-  "$50,000 - $100,000",
-  "Over $100,000"
+  "Under 100,000 DA",
+  "10,0000 DA - 250,000 DA",
+  "25,0000 DA - 500,000 DA",
+  "50,0000DA - 1,000,000 DA",
+  "Over 1,000,000 DA"
 ];
 
 const businessModels = [
   "All Models",
-  "Subscription",
-  "One-time",
-  "Project-based",
-  "Hybrid"
+  "partnership",
+  "revenue share"
 ];
 
 const Projects = () => {
@@ -83,13 +81,13 @@ const Projects = () => {
     
     const priceValue = project.fundingGoal || 0;
     const matchesPrice = priceFilter === "All Prices" || 
-      (priceFilter === "Under $10,000" && priceValue < 10000) ||
-      (priceFilter === "$10,000 - $25,000" && priceValue >= 10000 && priceValue <= 25000) ||
-      (priceFilter === "$25,000 - $50,000" && priceValue > 25000 && priceValue <= 50000) ||
-      (priceFilter === "$50,000 - $100,000" && priceValue > 50000 && priceValue <= 100000) ||
-      (priceFilter === "Over $100,000" && priceValue > 100000);
+      (priceFilter === "Under 100,000 DA" && priceValue < 100000) ||
+      (priceFilter === "100,000 DA - 250,000 DA" && priceValue >= 100000 && priceValue <= 250000) ||
+      (priceFilter === "250,000 DA - 500,000 DA" && priceValue > 250000 && priceValue <= 500000) ||
+      (priceFilter === "500,000 DA - 1,000,000 DA" && priceValue > 500000 && priceValue <= 1000000) ||
+      (priceFilter === "Over 1,000,000 DA" && priceValue > 1000000);
     
-    const matchesBusinessModel = businessModelFilter === "All Models" || project.type === businessModelFilter;
+    const matchesBusinessModel = businessModelFilter === "All Models" || project.model === businessModelFilter;
 
     return matchesLocation && matchesPrice && matchesBusinessModel;
   });
@@ -195,7 +193,7 @@ const Projects = () => {
             description={project.description}
             image={project.picture ? `http://localhost:9000${project.picture}` : 'https://via.placeholder.com/300x200'}
             location={project.location}
-            price={`$${project.fundingGoal}`}
+            price={`${project.fundingGoal} DA`}
             status={project.projectStatus}
             type={project.type}
             duration={project.duration}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquareMore, Filter, Search } from 'lucide-react';
 import axios from 'axios';
 import './Requests.css';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 
 const Requests = () => {
   const [requests, setRequests] = useState([]);
@@ -10,6 +10,7 @@ const Requests = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchRequests();
@@ -185,7 +186,7 @@ const Requests = () => {
                 </div>
               )}
               {request.dealStatus === "accepted" && (
-                <button className="view-contract-btn">View Contract</button>
+                <button onClick={()=>{navigate(`/contracts`)}} className="view-contract-btn">View Contract</button>
               )}
             </div>
           </div>

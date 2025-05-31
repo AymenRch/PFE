@@ -103,5 +103,5 @@ html {
     scroll-behavior: smooth;
 }
 .footer-logo3{
-    color: black;
+    color: var(--color-text-primary);
 }

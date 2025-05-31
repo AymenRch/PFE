@@ -90,6 +90,12 @@ function App() {
         }
       />
       <Route
+        path="/owner/:id"
+        element={
+          <User />
+        }
+      />
+      <Route
         path="/projects/:id"
         element={
           <Layout>

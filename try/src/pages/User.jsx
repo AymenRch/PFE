@@ -18,7 +18,6 @@ const User = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('No token found');
 
         await axios.get(`http://localhost:9000/auth/owner/${id}`).then((res)=>{
           if (res.data.error) {

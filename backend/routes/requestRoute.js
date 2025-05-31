@@ -67,7 +67,7 @@ router.post('/make/:id', async (req, res) => {
           entrepreneurId,
           investorId,
           projectId,
-          "equity",
+          project.model,
           project.fundingGoal,
           project.equetyPercentage,
           project.revenueSharePercentage,
@@ -392,7 +392,46 @@ router.post('/counter/:id',(req,res)=>{
     db.query(insertQuery, values, async (err) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      return res.status(201).json({ message: 'Counter offer sent successfully' });
+      const getEmailQuery = "SELECT name, email FROM users WHERE id = ?";
+          db.query(getEmailQuery, [entrepreneurId], async (err, userData) => {
+            if (err) return res.status(500).json({ error: err.message });
+            if (userData.length === 0) return res.status(404).json({ error: 'Entrepreneur not found' });
+
+            const { email, name } = userData[0];
+            const title = project.title;
+
+            try {
+              await transporter.sendMail({
+                from: 'aymenrch37@gmail.com',
+                to: email,
+                subject: 'Email Verification - Action Required',
+                html: `
+                  <p>Hi ${name},</p>
+                  <p>I hope you're doing well.</p>
+                  <p>You have a new offer for the <strong>${title}</strong> project.</p>
+                  <p>Feel free to review the details at your earliest convenience.</p>
+                  <p>Best regards,<br>[Your Name]</p>
+                `,
+              });
+            } catch (mailErr) {
+              console.warn('Email failed to send:', mailErr.message);
+              // Optionally continue without throwing
+            }
+
+            const notificationQuery = `
+              INSERT INTO notification (userId, message, timeStamp, state, userType, title) 
+              VALUES (?, ?, ?, ?, ?, ?)`;
+
+            const message = 'You have a new investment request for your project: ' + title;
+            const timeStamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+            db.query(notificationQuery, [entrepreneurId, message, timeStamp, 'unread', 'entreproneur', 'NEW REQUEST'], (err) => {
+              if (err) return res.status(500).json({ error: err.message });
+
+              return res.status(201).json({ message: 'Investment request sent successfully' });
+            });
+          });
+
     })
 
   })
@@ -401,34 +440,78 @@ router.post('/counter/:id',(req,res)=>{
 
 router.put('/contract/accept/:id', (req, res) => {
   const id = req.params.id;
-const authHead = req.headers.authorization;
+  const authHead = req.headers.authorization;
 
-  if (!authHead) return res.status(401).json({ error: "Token is required" });
+  if (!authHead) {
+    return res.status(401).json({ error: "Token is required" });
+  }
 
   try {
     const token = authHead.split(" ")[1];
     const decoded = jwt.verify(token, '1766736');
     const userId = decoded.id;
 
-    const query = "SELECT entrepreneurId, projectId FROM contract WHERE id = ?";
-    db.query(query, [id], (err, data) => {
+    // Step 1: Get contract + deal info (including amount)
+    const query = `
+      SELECT c.entrepreneurId, c.investorId, c.projectId, c.dealId, d.investmentAmount 
+      FROM contract c 
+      JOIN investmentdeal d ON c.dealId = d.id 
+      WHERE c.id = ?
+    `;
+    db.query(query, [id], (err, contractData) => {
       if (err) return res.status(500).json({ error: err.message });
-      if (data.length === 0) return res.status(404).json({ message: 'Contract not found or declined' });
+      if (contractData.length === 0) return res.status(404).json({ message: 'Contract not found or declined' });
 
-      if (userId != data[0].entrepreneurId)
+      const { entrepreneurId, investorId, projectId, investmentAmount } = contractData[0];
+
+      if (userId !== entrepreneurId) {
         return res.status(403).json({ message: 'Only the entrepreneur can sign the contract' });
+      }
 
-      const projectId = data[0].projectId;
+      // Step 2: Check if a signed contract already exists for this project
       const checkQuery = "SELECT * FROM contract WHERE projectId = ? AND signed = ?";
-      db.query(checkQuery, [projectId, 'signed'], (err2, data2) => {
+      db.query(checkQuery, [projectId, 'signed'], (err2, signedContracts) => {
         if (err2) return res.status(500).json({ error: err2.message });
-        if (data2.length > 0)
+        if (signedContracts.length > 0) {
           return res.status(409).json({ message: 'Only one contract can be signed per project' });
+        }
 
-        const signQuery = "UPDATE contract SET signed = ? WHERE id = ?";
-        db.query(signQuery, ['signed', id], (err3) => {
+        // Step 3: Check if both users have cards
+        const cardQuery = "SELECT id, userId FROM card WHERE userId IN (?, ?)";
+        db.query(cardQuery, [entrepreneurId, investorId], (err3, cardData) => {
           if (err3) return res.status(500).json({ error: err3.message });
-          return res.status(200).json({ message: 'Contract signed successfully' });
+          if (cardData.length < 2) {
+            return res.status(400).json({ message: 'Both parties must have a card to sign the contract' });
+          }
+
+          let cardId1 = null; // Entrepreneur card
+          let cardId2 = null; // Investor card
+
+          cardData.forEach(row => {
+            if (row.userId === entrepreneurId) cardId1 = row.id;
+            if (row.userId === investorId) cardId2 = row.id;
+          });
+
+          if (!cardId1 || !cardId2) {
+            return res.status(500).json({ error: 'Card IDs not found for both users' });
+          }
+
+          // Step 4: Insert transaction
+          const transferQuery = `
+            INSERT INTO transaction (entrepreneurId, investorId, entrepreneurCardId, investorCardId, amount)
+            VALUES (?, ?, ?, ?, ?)
+          `;
+          db.query(transferQuery, [entrepreneurId, investorId, cardId1, cardId2, investmentAmount], (err4) => {
+            if (err4) return res.status(500).json({ error: err4.message });
+
+            // Step 5: Mark contract as signed
+            const signQuery = "UPDATE contract SET signed = ? WHERE id = ?";
+            db.query(signQuery, ['signed', id], (err5) => {
+              if (err5) return res.status(500).json({ error: err5.message });
+
+              return res.status(200).json({ message: 'Contract signed successfully' });
+            });
+          });
         });
       });
     });
@@ -438,6 +521,7 @@ const authHead = req.headers.authorization;
     return res.status(401).json({ error: 'Invalid token' });
   }
 });
+
 
 router.delete('/contract/decline/:id',(req,res)=>{
   const id = req.params.id

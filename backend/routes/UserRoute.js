@@ -433,6 +433,26 @@ router.get('/identity/:token',(req,res)=>{
     if(err) return res.status(404).json({message: err})
       return res.status(200).json(data)
   })
+});
+
+router.get('/notificationCount/:token', (req, res) => {
+  try {
+    const token = req.params.token; // <-- FIXED
+    const decoded = jwt.verify(token, '1766736');
+    const userId = decoded.id;
+    
+    const query = "SELECT COUNT(*) AS count FROM notification WHERE userId = ? AND state = 'unread'";
+    db.query(query, [userId], (err, data) => {
+      if (err) {
+        console.error({ message: err });
+        return res.status(500).json(err);
+      }
+      return res.status(200).json({ count: data[0].count }); // use 200, not 201
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: 'Invalid or expired token' }); // use 401 for auth errors
+  }
 })
 
 

@@ -244,12 +244,12 @@ const Conter = () => {
               <option value="select" disabled>
                 Select Business Model
               </option>
-              <option value="equity">Equity</option>
+              <option value="equity">partnership</option>
               <option value="Revenue Sharing">Revenue Sharing</option>
             </select>
           </div>
 
-          <div className="form-group">
+          { model === 'equity' && (<div className="form-group">
             <label>Equity Percentage</label>
             <input
               type="number"
@@ -258,9 +258,9 @@ const Conter = () => {
               value={equity}
               onChange={(e) => setEquity(e.target.value)}
             />
-          </div>
+          </div>)}
 
-          <div className="form-group">
+         { model === 'Revenue Sharing' && ( <div className="form-group">
             <label>Revenue Sharing Percentage</label>
             <input
               type="number"
@@ -270,7 +270,7 @@ const Conter = () => {
               style={{color: 'black'}}
               onChange={(e) => setRevenue(e.target.value)}
             />
-          </div>
+          </div>)}
 
           <div className="form-group">
             <label>Duration</label>

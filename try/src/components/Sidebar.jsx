@@ -29,10 +29,8 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div className="logo-container">
-        
-        <span className="logo-text">Welcome {username}</span>
-      </div>
+     <div className="footer-logo footer-logo3">Grow<span style={{color:'#00915C'}}>Vest</span></div>
+
 
       <nav className="nav-menu">
         <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
