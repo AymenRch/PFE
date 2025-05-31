@@ -29,10 +29,19 @@ const businessModels = [
   "revenue share"
 ];
 
+const fields = [
+  'IT',
+  'Restoration',
+  'Commerce',
+  'Adds',
+  'Construction'
+]
+
 const Projects = () => {
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
   const [locationFilter, setLocationFilter] = useState("All Locations");
+  const [fieldFilter, setFieldFilter] = useState("All Fields");
   const [priceFilter, setPriceFilter] = useState("All Prices");
   const [businessModelFilter, setBusinessModelFilter] = useState("All Models");
   const [projects, setProjects] = useState([]);
@@ -78,7 +87,7 @@ const Projects = () => {
 
   const filteredProjects = projects.filter(project => {
     const matchesLocation = locationFilter === "All Locations" || project.location === locationFilter;
-    
+    const matchesField = fieldFilter === "All Fields" || project.type === fieldFilter;
     const priceValue = project.fundingGoal || 0;
     const matchesPrice = priceFilter === "All Prices" || 
       (priceFilter === "Under 100,000 DA" && priceValue < 100000) ||
@@ -89,7 +98,7 @@ const Projects = () => {
     
     const matchesBusinessModel = businessModelFilter === "All Models" || project.model === businessModelFilter;
 
-    return matchesLocation && matchesPrice && matchesBusinessModel;
+    return matchesLocation && matchesPrice && matchesBusinessModel && matchesField;
   });
 
   if (loading) {
@@ -153,6 +162,20 @@ const Projects = () => {
               <option value="All Locations">All Locations</option>
               {algerianWilayas.map(wilaya => (
                 <option key={wilaya} value={wilaya}>{wilaya}</option>
+              ))}
+            </select>
+          </div>
+
+           <div className="filter-group">
+            <label>Field</label>
+            <select 
+              value={fieldFilter} 
+              onChange={(e) => setFieldFilter(e.target.value)}
+              className="filter-select"
+            >
+              <option value="All Fields">All Fields</option>
+              {fields.map(field => (
+                <option key={field} value={field}>{field}</option>
               ))}
             </select>
           </div>
