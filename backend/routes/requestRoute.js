@@ -114,8 +114,12 @@ router.post('/make/:id', async (req, res) => {
             db.query(notificationQuery, [entrepreneurId, message, timeStamp, 'unread', 'entreproneur', 'NEW REQUEST'], (err) => {
               if (err) return res.status(500).json({ error: err.message });
 
-              return res.status(201).json({ message: 'Investment request sent successfully' });
-            });
+               const updateStatsQuery = "UPDATE stats SET activeInvestments = activeInvestments + 1 WHERE userId = ?";
+              db.query(updateStatsQuery, [investorId], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                return res.status(201).json({ message: 'Investment request sent successfully' });
+
+              });            });
           });
         });
       });
@@ -427,15 +431,20 @@ router.post('/counter/:id',(req,res)=>{
 
             db.query(notificationQuery, [entrepreneurId, message, timeStamp, 'unread', 'entreproneur', 'NEW REQUEST'], (err) => {
               if (err) return res.status(500).json({ error: err.message });
+              const updateStatsQuery = "UPDATE stats SET activeInvestments = activeInvestments + 1 WHERE userId = ?";
+              db.query(updateStatsQuery, [investorId], (err) => {
+                if (err) return res.status(500).json({ error: err.message });
+                return res.status(201).json({ message: 'Investment request sent successfully' });
 
-              return res.status(201).json({ message: 'Investment request sent successfully' });
+              });
+
             });
           });
 
     })
 
   })
-})
+});
 
 
 router.put('/contract/accept/:id', (req, res) => {
@@ -509,8 +518,33 @@ router.put('/contract/accept/:id', (req, res) => {
             db.query(signQuery, ['signed', id], (err5) => {
               if (err5) return res.status(500).json({ error: err5.message });
 
-              return res.status(200).json({ message: 'Contract signed successfully' });
-            });
+              const updateStats = `
+                UPDATE stats SET completedInvestements = completedInvestements + 1 WHERE userId IN (?, ?)
+              `;
+              db.query(updateStats, [investorId, entrepreneurId], (err6) => {
+                if (err6) return res.status(500).json({ error: err6.message });
+
+                const returns = `
+                UPDATE stats SET totalReturns = totalReturns + ? WHERE userId = ?
+              `;
+              db.query(returns, [investmentAmount, entrepreneurId], (err7) => {
+                if (err7) return res.status(500).json({ error: err7.message });
+
+                const activeInvestments = `
+                UPDATE stats SET activeInvestments = activeInvestments + 1 WHERE userId = ?
+              `;
+              db.query(activeInvestments, [investorId], (err8) => {
+                if (err8) return res.status(500).json({ error: err8.message });
+
+                 return res.status(201).json({ message: 'Contract signed successfully' });
+
+              })
+
+                
+              })
+
+              }); 
+               });
           });
         });
       });

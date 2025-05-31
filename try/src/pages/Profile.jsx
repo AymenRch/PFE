@@ -85,7 +85,7 @@ const Profile = () => {
           </div>
 
           <div className="profile-stat-card">
-            <div className="profile-stat-value">{stats.totalReturns ?? 'N/A'}</div>
+            <div className="profile-stat-value">{stats.totalReturns ?? 'N/A'} DA</div>
             <div className="profile-stat-label">Total Returns</div>
           </div>
 
