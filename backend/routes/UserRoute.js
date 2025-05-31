@@ -109,15 +109,15 @@ router.post('/register/:token', upload.single('ProfilePicture'), async (req, res
             transporter.sendMail({
               from: 'aymenrch37@gmail.com',
               to: email,
-              subject: 'Welcome to Shark Tank - Account Successfully Created!',
+              subject: 'Welcome to Grow Vest - Account Successfully Created!',
               html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 20px auto;">
                   <h2 style="color: #007bff;">Hello ${name},</h2>
-                  <p>We're excited to inform you that your Shark Tank account has been successfully created!</p>
+                  <p>We're excited to inform you that your Grow Vest account has been successfully created!</p>
                   <p>You can now explore and engage with projects, connect with entrepreneurs, and take your first step toward investing or showcasing your ideas.</p>
                   <p>If you have any questions or need support, feel free to reach out to us.</p>
                   <p>Welcome aboard!</p>
-                  <p style="margin-top: 20px; color: #555;">Best regards,<br>Shark Tank Team</p>
+                  <p style="margin-top: 20px; color: #555;">Best regards,<br>Grow Vest Team</p>
                 </div>
               `,
             });

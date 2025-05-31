@@ -414,7 +414,7 @@ router.post('/counter/:id',(req,res)=>{
                   <p>I hope you're doing well.</p>
                   <p>You have a new offer for the <strong>${title}</strong> project.</p>
                   <p>Feel free to review the details at your earliest convenience.</p>
-                  <p>Best regards,<br>[Your Name]</p>
+                  <p>Best regards,<br>[Grow Vest]</p>
                 `,
               });
             } catch (mailErr) {

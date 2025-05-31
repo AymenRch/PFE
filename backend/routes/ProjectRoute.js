@@ -162,14 +162,14 @@ router.post('/create/:token', upload.single('picture'), async (req, res) => {
                     transporter.sendMail({
                         from: 'aymenrch37@gmail.com',
                         to: userEmail,
-                        subject: 'Shark Tank - Project Successfully Created!',
+                        subject: 'Grow Vest - Project Successfully Created!',
                         html: `
                             <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 600px; margin: 20px auto;">
                                 <h2 style="color: #007bff;">Hello ${userName},</h2>
-                                <p>We're excited to inform you that your Shark Tank Project has been successfully created!</p>
+                                <p>We're excited to inform you that your Grow Vest Project has been successfully created!</p>
                                 <p>Entrepreneurs can now explore the details of your project, connect with you, and take the first step toward investing with you.</p>
                                 <p>If you have any questions or need support, feel free to reach out to us.</p>
-                                <p style="margin-top: 20px; color: #555;">Best regards,<br>Shark Tank Team</p>
+                                <p style="margin-top: 20px; color: #555;">Best regards,<br>Grow Vest Team</p>
                             </div>
                         `,
                     }, (mailErr) => {
