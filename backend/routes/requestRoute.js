@@ -327,9 +327,10 @@ router.get('/contract/:id', (req, res) => {
   const { id } = req.params;
 
   const query = `
-    SELECT contract.*, projects.title AS projectTitle 
+    SELECT contract.*, projects.title AS projectTitle, investmentdeal.investmentAmount AS amount
     FROM contract
     JOIN projects ON contract.projectId = projects.id
+    JOIN investmentdeal ON contract.dealId = investmentdeal.id
     WHERE contract.id = ?
   `;
 

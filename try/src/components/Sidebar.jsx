@@ -8,7 +8,8 @@ import {
   Moon,
   Sun,
   LogOut,
-  Contrast
+  FileUser,
+  CreditCard
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import './Sidebar.css';
@@ -54,11 +55,11 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink to="/contracts" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-          <Contrast size={20} />
+          <FileUser size={20} />
         <span>Contracts</span>
         </NavLink>
         <NavLink to="/payment" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-          <Contrast size={20} />
+          <CreditCard size={20} />
         <span>Payment</span>
         </NavLink>
       </nav>

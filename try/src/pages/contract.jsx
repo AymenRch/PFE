@@ -93,6 +93,10 @@ const handleDecline = () => {
   });
 };
 
+const currentDate = new Date().toLocaleDateString();
+const duration = data.duration ? new Date(data.duration).toLocaleDateString() : '';
+
+
 const handlePrint = () => {
   const element = contractRef.current;
   const opt = {
@@ -160,7 +164,7 @@ const handlePrint = () => {
 
           ) }
       </div>
-        <h1 style={{marginLeft:"400px"}}>Contract</h1>
+        <h1 style={{marginLeft:"470px"}}>Contract</h1>
 
 <div className="contract-details professional-contract" ref={contractRef}>
   <h2>Investment Agreement</h2>
@@ -175,16 +179,20 @@ const handlePrint = () => {
   <p><strong>2. Business Model:</strong><br/>
   The project will operate under the following model: <em>{data.businessModel}</em>.</p>
 
-  <p><strong>3. Investment Details:</strong><br/>
-  The Investor agrees to invest a total amount of <strong>${data.amount}</strong> in exchange for <strong>{data.equity}%</strong> equity in the project.</p>
+  {data.equity && (
+    <p><strong>3. Investment Details:</strong><br/>
+  The Investor agrees to invest a total amount of <strong>{data.amount} DA</strong> in exchange for <strong>{data.equity}%</strong> equity in the project.</p>
+  )}
 
-  <p><strong>4. Revenue Sharing:</strong><br/>
-  The Entrepreneur agrees to share <strong>{data.revenue}%</strong> of the project’s monthly gross revenue with the Investor during the active duration of this agreement.</p>
+  {data.revenue && (
+    <p><strong>3. Investment Details:</strong><br/>
+  The Entrepreneur agrees to share <strong>{data.revenue}%</strong> of the project’s monthly gross revenue with the Investor during the active duration of this agreement for <strong>{data.amount} DA</strong> in exchange.</p>
+  )}
 
-  <p><strong>5. Duration:</strong><br/>
-  This agreement will remain in effect for a period of <strong>{data.duration}</strong> months from the date of signing unless otherwise terminated by mutual consent or breach of terms.</p>
+  <p><strong>4. Duration:</strong><br/>
+  This agreement will remain in effect for the period from <strong>{currentDate}</strong> to <strong>{duration}</strong> months from the date of signing unless otherwise terminated by mutual consent or breach of terms.</p>
 
-  <p><strong>6. Signatures:</strong><br/>
+  <p><strong>5. Signatures:</strong><br/>
   This agreement shall be considered binding once signed by both parties.</p>
 
   <div className="signature-section">

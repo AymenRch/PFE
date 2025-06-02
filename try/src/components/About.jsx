@@ -9,7 +9,7 @@ const About = () => {
         <div className="about-video-wrapper about-animate-left">
           <video
             className="about-video"
-            src="https://www.w3schools.com/html/mov_bbb.mp4" // Replace with your own video URL
+            src="http://localhost:9000/uploads/video.mp4"
             autoPlay
             loop
             muted

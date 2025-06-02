@@ -79,7 +79,7 @@ const Requests = () => {
   // Update filtering logic and field names to match your API response
   const filteredRequests = requests.filter(request => {
     const matchesSearch =
-      request.investmentModel?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.projectTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       String(request.investorId).includes(searchTerm) ||
       String(request.entrepreneurId).includes(searchTerm);
     const matchesStatus =

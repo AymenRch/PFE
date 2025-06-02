@@ -35,7 +35,7 @@ const Features = () => {
   return (
     <section className="features-section" id="features">
       <div className="features-row">
-        {projects.slice(0, 3).map(project => (
+        {projects.map(project => (
           <ProjectCard
             key={project.id}
             title={project.title}
